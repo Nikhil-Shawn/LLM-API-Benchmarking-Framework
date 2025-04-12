@@ -1,0 +1,21 @@
+# Java Backend
+backend/target/
+backend/.mvn/
+backend/*.iml
+backend/.idea/
+backend/*.log
+
+# React Frontend
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Common IDE and OS files
+*.iml
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
