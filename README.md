@@ -139,7 +139,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Stability AI** for Stable Diffusion.
 - **OpenAI** for DALL-E.
 - **Midjourney** for its creative AI model.
-
----
-
-Feel free to modify and personalize the README as needed based on your project's specifics!
