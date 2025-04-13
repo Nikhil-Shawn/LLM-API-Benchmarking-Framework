@@ -1,4 +1,5 @@
 import { useState } from "react";
+import './App.css';
 
 // Available model options for each use case - reduced to 3 models
 const codeModels = [
@@ -193,47 +194,47 @@ export default function LLMComparisonApp() {
   // Render model result card
   const renderModelCard = (modelKey, modelData) => {
     return (
-      <div className="p-4 border-2 border-gray-200 rounded-lg">
-        <div className="flex justify-between items-center mb-3 pb-2 border-b">
-          <h3 className="font-bold text-lg">{modelData.name}</h3>
-          <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+      <div className="model-card">
+        <div className="model-header">
+          <h3 className="model-title">{modelData.name}</h3>
+          <span className="model-score">
             Score: {getTotalScore(modelKey)}/50
           </span>
         </div>
         
         {/* Display output based on use case */}
         {useCase === "code" ? (
-          <div className="bg-gray-800 text-gray-100 p-4 rounded-md overflow-auto max-h-96 mb-4">
-            <pre className="text-sm font-mono">
+          <div className="code-output">
+            <pre className="code-block">
               <code>{modelData.output}</code>
             </pre>
           </div>
         ) : (
-          <div className="flex justify-center mb-4">
+          <div className="image-output">
             <img 
               src={modelData.output} 
               alt={`${modelData.name} generated image`} 
-              className="max-h-64 object-contain rounded-md border border-gray-300" 
+              className="generated-image" 
             />
           </div>
         )}
         
         {/* Scoring section */}
-        <div className="mt-4">
-          <h4 className="font-medium mb-2">Rate this output:</h4>
-          <div className="space-y-3">
+        <div className="rating-section">
+          <h4 className="rating-title">Rate this output:</h4>
+          <div className="criteria-list">
             {getCriteria().map(criterion => (
-              <div key={criterion.key} className="flex items-center justify-between">
-                <span className="text-sm">{criterion.label}:</span>
-                <div className="flex space-x-1">
+              <div key={criterion.key} className="criterion-item">
+                <span className="criterion-label">{criterion.label}:</span>
+                <div className="score-buttons">
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(score => (
                     <button
                       key={score}
                       onClick={() => updateScore(modelKey, criterion.key, score)}
-                      className={`w-6 h-6 flex items-center justify-center text-xs rounded ${
+                      className={`score-button ${
                         evaluation.scores[modelKey][criterion.key] === score
-                          ? "bg-blue-600 text-white" 
-                          : "bg-gray-200 hover:bg-gray-300"
+                          ? "score-button-active" 
+                          : ""
                       }`}
                     >
                       {score}
@@ -249,47 +250,46 @@ export default function LLMComparisonApp() {
   };
   
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
-          <h1 className="text-3xl font-bold mb-2 text-center">LLM Comparison App</h1>
-          <p className="text-gray-600 text-center mb-6">Compare outputs from different LLM providers for code and image generation</p>
+    <div className="app-container">
+      <div className="app-content">
+        <div className="app-header">
+          <h1 className="app-title">LLM Comparison App</h1>
+          <div className="red-test">
+            <h1 className="white-text">If this is red, CSS works!</h1>
+          </div>
+          <p className="app-description">Compare outputs from different LLM providers for code and image generation</p>
           
-          <form onSubmit={handleSubmit} className="mb-6">
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2 font-medium">Select Use Case:</label>
-              <div className="flex space-x-4">
+          <form onSubmit={handleSubmit} className="app-form">
+            <div className="form-group">
+              <label className="form-label">Select Use Case:</label>
+              <div className="button-group">
                 <button
                   type="button"
                   onClick={() => setUseCase("code")}
-                  className={`px-4 py-2 rounded-md ${useCase === "code" 
-                    ? "bg-blue-600 text-white" 
-                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                  className={`use-case-button ${useCase === "code" ? "use-case-button-active" : ""}`}
                 >
                   Code Generation
                 </button>
                 <button
                   type="button"
                   onClick={() => setUseCase("image")}
-                  className={`px-4 py-2 rounded-md ${useCase === "image" 
-                    ? "bg-blue-600 text-white" 
-                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                  className={`use-case-button ${useCase === "image" ? "use-case-button-active" : ""}`}
                 >
                   Image Generation
                 </button>
               </div>
             </div>
             
-            <div className="mb-6">
-              <label className="block text-gray-700 mb-2 font-medium">Select Models to Compare:</label>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="form-group">
+              <label className="form-label">Select Models to Compare:</label>
+              <div className="models-grid">
                 {/* Model A Selection */}
-                <div className="border border-gray-300 rounded-md p-4">
-                  <h3 className="font-medium mb-2">Model A:</h3>
+                <div className="model-select-box">
+                  <h3 className="model-select-title">Model A:</h3>
                   <select 
                     value={selectedModels[useCase].modelA}
                     onChange={(e) => handleModelChange("modelA", e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="model-select"
                   >
                     {currentModels.map(model => (
                       <option key={model.id} value={model.id}>{model.name}</option>
@@ -298,12 +298,12 @@ export default function LLMComparisonApp() {
                 </div>
                 
                 {/* Model B Selection */}
-                <div className="border border-gray-300 rounded-md p-4">
-                  <h3 className="font-medium mb-2">Model B:</h3>
+                <div className="model-select-box">
+                  <h3 className="model-select-title">Model B:</h3>
                   <select 
                     value={selectedModels[useCase].modelB}
                     onChange={(e) => handleModelChange("modelB", e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="model-select"
                   >
                     {currentModels.map(model => (
                       <option key={model.id} value={model.id}>{model.name}</option>
@@ -312,12 +312,12 @@ export default function LLMComparisonApp() {
                 </div>
                 
                 {/* Model C Selection */}
-                <div className="border border-gray-300 rounded-md p-4">
-                  <h3 className="font-medium mb-2">Model C:</h3>
+                <div className="model-select-box">
+                  <h3 className="model-select-title">Model C:</h3>
                   <select 
                     value={selectedModels[useCase].modelC}
                     onChange={(e) => handleModelChange("modelC", e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="model-select"
                   >
                     {currentModels.map(model => (
                       <option key={model.id} value={model.id}>{model.name}</option>
@@ -327,15 +327,15 @@ export default function LLMComparisonApp() {
               </div>
             </div>
             
-            <div className="mb-4">
-              <div className="flex justify-between items-center mb-2">
-                <label className="block text-gray-700 font-medium">
+            <div className="form-group">
+              <div className="prompt-header">
+                <label className="form-label">
                   Enter your prompt for {useCase === "code" ? "code" : "image"} generation:
                 </label>
                 <button 
                   type="button"
                   onClick={() => setShowCriteria(!showCriteria)}
-                  className="text-blue-600 hover:text-blue-800 text-sm"
+                  className="criteria-toggle"
                 >
                   {showCriteria ? "Hide evaluation criteria" : "Show evaluation criteria"}
                 </button>
@@ -343,7 +343,7 @@ export default function LLMComparisonApp() {
               <textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                className="w-full border border-gray-300 p-3 rounded"
+                className="prompt-input"
                 rows="4"
                 placeholder={useCase === "code" 
                   ? "E.g., Write a function to find the longest palindrome substring in a string" 
@@ -354,10 +354,10 @@ export default function LLMComparisonApp() {
             </div>
             
             {showCriteria && (
-              <div className="mb-4 p-4 bg-blue-50 rounded-md border border-blue-200">
-                <h3 className="font-semibold text-blue-800 mb-2">Evaluation Criteria for {useCase === "code" ? "Code" : "Image"} Generation:</h3>
+              <div className="criteria-box">
+                <h3 className="criteria-title">Evaluation Criteria for {useCase === "code" ? "Code" : "Image"} Generation:</h3>
                 {useCase === "code" ? (
-                  <ul className="list-disc pl-5 space-y-1 text-sm text-blue-900">
+                  <ul className="criteria-list-detailed">
                     <li><strong>Correctness</strong> - Does the code solve the problem correctly?</li>
                     <li><strong>Efficiency</strong> - Is the algorithm optimal in terms of time/space complexity?</li>
                     <li><strong>Readability</strong> - Is the code easy to understand and well-structured?</li>
@@ -365,7 +365,7 @@ export default function LLMComparisonApp() {
                     <li><strong>Documentation</strong> - Are there helpful comments explaining the logic?</li>
                   </ul>
                 ) : (
-                  <ul className="list-disc pl-5 space-y-1 text-sm text-blue-900">
+                  <ul className="criteria-list-detailed">
                     <li><strong>Relevance</strong> - How well does the image match the prompt?</li>
                     <li><strong>Quality</strong> - Is the image clear, detailed, and visually appealing?</li>
                     <li><strong>Creativity</strong> - Does the image show originality and imagination?</li>
@@ -379,7 +379,7 @@ export default function LLMComparisonApp() {
             <button
               type="submit"
               disabled={isLoading || !prompt.trim()}
-              className="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
+              className={`submit-button ${isLoading || !prompt.trim() ? "submit-button-disabled" : ""}`}
             >
               {isLoading ? "Processing..." : "Generate and Compare"}
             </button>
@@ -387,10 +387,10 @@ export default function LLMComparisonApp() {
         </div>
         
         {results && (
-          <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
-            <h2 className="text-xl font-bold mb-4">Comparison Results:</h2>
+          <div className="results-container">
+            <h2 className="results-title">Comparison Results:</h2>
             
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="results-grid">
               {/* Model A Result */}
               {renderModelCard("A", results.modelA)}
               
@@ -402,19 +402,19 @@ export default function LLMComparisonApp() {
             </div>
             
             {/* Additional Feedback */}
-            <div className="mt-6 p-5 bg-gray-50 rounded-lg border border-gray-200">
-              <h3 className="font-medium mb-3">Additional Comments (Optional)</h3>
+            <div className="feedback-section">
+              <h3 className="feedback-title">Additional Comments (Optional)</h3>
               <textarea
                 value={evaluation.feedback}
                 onChange={(e) => setEvaluation({...evaluation, feedback: e.target.value})}
-                className="w-full border border-gray-300 p-3 rounded-md mb-4"
+                className="feedback-input"
                 rows="3"
                 placeholder="Share any additional observations about the comparison..."
               />
-              <div className="flex justify-between items-center">
-                <div className="text-gray-600">
+              <div className="evaluation-footer">
+                <div className="evaluation-summary">
                   {getTotalScore("A") > 0 && getTotalScore("B") > 0 && getTotalScore("C") > 0 ? (
-                    <span className="font-medium">
+                    <span className="evaluation-result">
                       {(() => {
                         const scores = [
                           { model: "A", score: getTotalScore("A"), name: results.modelA.name },
@@ -437,7 +437,13 @@ export default function LLMComparisonApp() {
                 </div>
                 <button
                   onClick={handleEvaluationSubmit}
-                  className="bg-green-600 text-white py-2 px-6 rounded-md hover:bg-green-700 disabled:bg-green-300"
+                  className={`evaluation-submit-button ${
+                    Object.keys(evaluation.scores.A).length === 0 || 
+                    Object.keys(evaluation.scores.B).length === 0 ||
+                    Object.keys(evaluation.scores.C).length === 0
+                      ? "evaluation-submit-button-disabled"
+                      : ""
+                  }`}
                   disabled={
                     Object.keys(evaluation.scores.A).length === 0 || 
                     Object.keys(evaluation.scores.B).length === 0 ||
