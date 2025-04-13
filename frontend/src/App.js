@@ -254,9 +254,6 @@ export default function LLMComparisonApp() {
       <div className="app-content">
         <div className="app-header">
           <h1 className="app-title">LLM Comparison App</h1>
-          <div className="red-test">
-            <h1 className="white-text">If this is red, CSS works!</h1>
-          </div>
           <p className="app-description">Compare outputs from different LLM providers for code and image generation</p>
           
           <form onSubmit={handleSubmit} className="app-form">
