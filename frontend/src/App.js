@@ -1,6 +1,24 @@
 import { useState } from "react";
 import './App.css';
 
+
+const API_BASE_URL = "http://localhost:8081";
+
+const autoEvaluateOutput = (output, useCase) => {
+  const criteria = useCase === "code"
+    ? ["correctness", "efficiency", "readability", "robustness", "documentation"]
+    : ["relevance", "quality", "creativity", "consistency", "composition"];
+
+  const scores = {};
+  criteria.forEach((criterion) => {
+    // Implement your evaluation logic here.
+    // For demonstration, assigning a random score between 6 and 10.
+    scores[criterion] = Math.floor(Math.random() * 5) + 6;
+  });
+
+  return scores;
+};
+
 // Available model options for each use case - reduced to 3 models
 const codeModels = [
   { id: "starcoder", name: "StarCoder (HuggingFace)" },
@@ -63,36 +81,32 @@ export default function LLMComparisonApp() {
     e.preventDefault();
     setIsLoading(true);
     setEvaluation({ scores: { A: {}, B: {}, C: {} }, feedback: "" });
-    
+  
     try {
-      // API endpoint based on use case
-      const endpoint = useCase === "code" ? "/api/generate-code" : "/api/generate-image";
-      
-      // Prepare models for API request
+      const endpoint = useCase === "code"
+        ? `${API_BASE_URL}/api/generate-code`
+        : `${API_BASE_URL}/api/generate-image`;
+  
       const models = [
         selectedModels[useCase].modelA,
         selectedModels[useCase].modelB,
         selectedModels[useCase].modelC
       ];
-      
+  
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          prompt,
-          models
-        })
+        body: JSON.stringify({ prompt, models })
       });
-      
+  
       if (!response.ok) {
         throw new Error("Failed to generate results");
       }
-      
+  
       const data = await response.json();
-      
-      // Format results for display
+  
       const formattedResults = {
         modelA: {
           name: getModelName("modelA"),
@@ -107,8 +121,20 @@ export default function LLMComparisonApp() {
           output: data.results[2].output
         }
       };
-      
+  
       setResults(formattedResults);
+  
+      // Automatically evaluate outputs
+      const autoScores = {
+        A: autoEvaluateOutput(formattedResults.modelA.output, useCase),
+        B: autoEvaluateOutput(formattedResults.modelB.output, useCase),
+        C: autoEvaluateOutput(formattedResults.modelC.output, useCase)
+      };
+  
+      setEvaluation((prev) => ({
+        ...prev,
+        scores: autoScores
+      }));
     } catch (error) {
       console.error("Error generating results:", error);
       alert("Failed to generate results. Please try again.");
@@ -116,6 +142,7 @@ export default function LLMComparisonApp() {
       setIsLoading(false);
     }
   };
+  
   
   // Get criteria for current use case
   const getCriteria = () => {
@@ -162,7 +189,7 @@ export default function LLMComparisonApp() {
   // Handle evaluation submission
   const handleEvaluationSubmit = async () => {
     try {
-      const response = await fetch("/api/submit-evaluation", {
+      const response = await fetch(`${API_BASE_URL}/api/submit-evaluation`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
