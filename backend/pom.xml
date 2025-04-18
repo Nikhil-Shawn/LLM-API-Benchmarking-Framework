@@ -46,6 +46,12 @@
             <artifactId>google-cloud-vertexai</artifactId>
         </dependency>
 
+        <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20230227</version>
+        </dependency>
+
         <!-- GCP Core Libraries (optional but useful) -->
         <dependency>
             <groupId>com.google.auth</groupId>

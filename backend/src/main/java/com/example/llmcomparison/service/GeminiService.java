@@ -1,6 +1,9 @@
 package com.example.llmcomparison.service;
 
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -38,7 +41,17 @@ public class GeminiService {
             HttpClient client = HttpClient.newHttpClient();
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            return response.body();
+            // Log full response
+            System.out.println("[Gemini Full JSON] " + response.body());
+
+            // Parse JSON using Jackson
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(response.body());
+
+            // Extract only the text part
+            String code = root.at("/candidates/0/content/parts/0/text").asText();
+            return code;
+
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }
@@ -47,4 +60,4 @@ public class GeminiService {
     private String toJsonString(String text) {
         return "\"" + text.replace("\"", "\\\"") + "\"";
     }
-}
+} 
