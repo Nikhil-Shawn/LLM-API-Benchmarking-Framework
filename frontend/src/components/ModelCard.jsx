@@ -1,14 +1,6 @@
 import { getCriteria } from "../utils/evaluation";
 
-export default function ModelCard({
-  modelKey,
-  modelData,
-  useCase,
-  evaluation,
-  updateScore
-}) {
-  const scores = evaluation.scores[modelKey];
-
+export default function ModelCard({ modelKey, modelData, scores = {}, useCase }) {
   return (
     <div className="model-card">
       <div className="model-header">
@@ -31,27 +23,14 @@ export default function ModelCard({
       )}
 
       <div className="rating-section">
-        <h4 className="rating-title">Rate this output:</h4>
-        <div className="criteria-list">
+        <h4 className="rating-title">Scores by Criteria:</h4>
+        <ul className="criteria-list">
           {getCriteria(useCase).map((criterion) => (
-            <div key={criterion.key} className="criterion-item">
-              <span className="criterion-label">{criterion.label}:</span>
-              <div className="score-buttons">
-                {[1,2,3,4,5,6,7,8,9,10].map(score => (
-                  <button
-                    key={score}
-                    onClick={() => updateScore(modelKey, criterion.key, score)}
-                    className={`score-button ${
-                      scores[criterion.key] === score ? "score-button-active" : ""
-                    }`}
-                  >
-                    {score}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <li key={criterion.key} style={{ color: "navy", fontWeight: "500" }}>
+              • {criterion.label}: {scores[criterion.key] ?? "-"}
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </div>
   );

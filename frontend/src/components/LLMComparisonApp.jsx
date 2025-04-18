@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { generateOutputs, submitEvaluation } from "../services/api";
+import { generateOutputs } from "../services/api";
 import { autoEvaluateOutput, getCriteria, getTotalScore } from "../utils/evaluation";
 import ModelCard from "./ModelCard";
 
@@ -20,10 +20,7 @@ export default function LLMComparisonApp() {
   const [prompt, setPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState(null);
-  const [evaluation, setEvaluation] = useState({
-    scores: { A: {}, B: {}, C: {} },
-    feedback: ""
-  });
+  const [evaluation, setEvaluation] = useState({ scores: { A: {}, B: {}, C: {} } });
   const [showCriteria, setShowCriteria] = useState(false);
 
   const [selectedModels, setSelectedModels] = useState({
@@ -48,8 +45,6 @@ export default function LLMComparisonApp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setEvaluation({ scores: { A: {}, B: {}, C: {} }, feedback: "" });
-
     try {
       const models = [
         selectedModels[useCase].modelA,
@@ -68,12 +63,12 @@ export default function LLMComparisonApp() {
       setResults(formattedResults);
 
       const autoScores = {
-        A: autoEvaluateOutput(formattedResults.modelA.output, useCase),
-        B: autoEvaluateOutput(formattedResults.modelB.output, useCase),
-        C: autoEvaluateOutput(formattedResults.modelC.output, useCase)
+        A: autoEvaluateOutput(formattedResults.modelA.output, useCase, prompt),
+        B: autoEvaluateOutput(formattedResults.modelB.output, useCase, prompt),
+        C: autoEvaluateOutput(formattedResults.modelC.output, useCase, prompt)
       };
 
-      setEvaluation((prev) => ({ ...prev, scores: autoScores }));
+      setEvaluation({ scores: autoScores });
     } catch (error) {
       console.error("Error generating results:", error);
       alert("Failed to generate results. Please try again.");
@@ -82,59 +77,24 @@ export default function LLMComparisonApp() {
     }
   };
 
-  const updateScore = (model, criterion, score) => {
-    setEvaluation(prev => ({
-      ...prev,
-      scores: {
-        ...prev.scores,
-        [model]: {
-          ...prev.scores[model],
-          [criterion]: score
-        }
-      }
-    }));
-  };
-
-  const handleEvaluationSubmit = async () => {
-    try {
-      await submitEvaluation({
-        useCase,
-        prompt,
-        models: {
-          modelA: selectedModels[useCase].modelA,
-          modelB: selectedModels[useCase].modelB,
-          modelC: selectedModels[useCase].modelC
-        },
-        scores: evaluation.scores,
-        feedback: evaluation.feedback
-      });
-
-      alert("Evaluation submitted successfully!");
-    } catch (error) {
-      console.error("Error submitting evaluation:", error);
-      alert("Failed to submit evaluation. Please try again.");
-    }
-  };
-
   return (
     <div className="app-content">
       <div className="app-header">
         <h1 className="app-title">LLM Comparison App</h1>
-        <p className="app-description">
-          Compare outputs from different LLM providers for code and image generation
-        </p>
+        <p className="app-description">Compare outputs from different LLM providers for code and image generation</p>
+
         <form onSubmit={handleSubmit} className="app-form">
           <div className="form-group">
             <label className="form-label">Select Use Case:</label>
             <div className="button-group">
-              {['code', 'image'].map(type => (
+              {["code", "image"].map(type => (
                 <button
                   type="button"
                   key={type}
                   onClick={() => setUseCase(type)}
-                  className={`use-case-button ${useCase === type ? 'use-case-button-active' : ''}`}
+                  className={`use-case-button ${useCase === type ? "use-case-button-active" : ""}`}
                 >
-                  {type === 'code' ? 'Code Generation' : 'Image Generation'}
+                  {type === "code" ? "Code Generation" : "Image Generation"}
                 </button>
               ))}
             </div>
@@ -143,7 +103,7 @@ export default function LLMComparisonApp() {
           <div className="form-group">
             <label className="form-label">Select Models to Compare:</label>
             <div className="models-grid">
-              {['modelA', 'modelB', 'modelC'].map(position => (
+              {["modelA", "modelB", "modelC"].map(position => (
                 <div className="model-select-box" key={position}>
                   <h3 className="model-select-title">Model {position.slice(-1)}:</h3>
                   <select
@@ -162,9 +122,7 @@ export default function LLMComparisonApp() {
 
           <div className="form-group">
             <div className="prompt-header">
-              <label className="form-label">
-                Enter your prompt for {useCase === "code" ? "code" : "image"} generation:
-              </label>
+              <label className="form-label">Enter your prompt for {useCase === "code" ? "code" : "image"} generation:</label>
               <button
                 type="button"
                 onClick={() => setShowCriteria(!showCriteria)}
@@ -186,7 +144,7 @@ export default function LLMComparisonApp() {
             <div className="criteria-box">
               <h3 className="criteria-title">Evaluation Criteria:</h3>
               <ul className="criteria-list-detailed">
-                {getCriteria(useCase).map((c) => (
+                {getCriteria(useCase).map(c => (
                   <li key={c.key}><strong>{c.label}</strong></li>
                 ))}
               </ul>
@@ -196,7 +154,7 @@ export default function LLMComparisonApp() {
           <button
             type="submit"
             disabled={isLoading || !prompt.trim()}
-            className={`submit-button ${isLoading || !prompt.trim() ? 'submit-button-disabled' : ''}`}
+            className={`submit-button ${isLoading || !prompt.trim() ? "submit-button-disabled" : ""}`}
           >
             {isLoading ? "Processing..." : "Generate and Compare"}
           </button>
@@ -207,57 +165,34 @@ export default function LLMComparisonApp() {
         <div className="results-container">
           <h2 className="results-title">Comparison Results:</h2>
           <div className="results-grid">
-            {['A', 'B', 'C'].map(key => (
+            {["A", "B", "C"].map(key => (
               <ModelCard
                 key={key}
                 modelKey={key}
                 modelData={results[`model${key}`]}
+                scores={evaluation.scores[key]}
                 useCase={useCase}
-                evaluation={evaluation}
-                updateScore={updateScore}
               />
             ))}
           </div>
 
-          <div className="feedback-section">
-            <h3 className="feedback-title">Additional Comments (Optional)</h3>
-            <textarea
-              value={evaluation.feedback}
-              onChange={(e) => setEvaluation({ ...evaluation, feedback: e.target.value })}
-              className="feedback-input"
-              rows="3"
-              placeholder="Share any additional observations about the comparison..."
-            />
-            <div className="evaluation-footer">
-              <div className="evaluation-summary">
-                {["A", "B", "C"].every(m => Object.keys(evaluation.scores[m]).length > 0) ? (
-                  <span className="evaluation-result">
-                    {(() => {
-                      const scores = ["A", "B", "C"].map(m => ({
-                        model: m,
-                        score: getTotalScore(evaluation.scores[m]),
-                        name: results[`model${m}`].name
-                      })).sort((a, b) => b.score - a.score);
-                      if (scores[0].score === scores[1].score && scores[1].score === scores[2].score) {
-                        return "All models scored equally";
-                      } else if (scores[0].score === scores[1].score) {
-                        return `${scores[0].name} and ${scores[1].name} tied for highest score`;
-                      } else {
-                        return `${scores[0].name} scored highest with ${scores[0].score} points`;
-                      }
-                    })()}
-                  </span>
-                ) : (
-                  <span>Please rate all models to see comparison results</span>
-                )}
-              </div>
-              <button
-                onClick={handleEvaluationSubmit}
-                className={`evaluation-submit-button ${Object.values(evaluation.scores).some(s => Object.keys(s).length === 0) ? 'evaluation-submit-button-disabled' : ''}`}
-                disabled={Object.values(evaluation.scores).some(s => Object.keys(s).length === 0)}
-              >
-                Submit Evaluation
-              </button>
+          <div className="evaluation-footer">
+            <div className="evaluation-summary">
+              {(() => {
+                const scores = ["A", "B", "C"].map(m => ({
+                  model: m,
+                  score: getTotalScore(evaluation.scores[m]),
+                  name: results[`model${m}`].name
+                })).sort((a, b) => b.score - a.score);
+
+                if (scores[0].score === scores[1].score && scores[1].score === scores[2].score) {
+                  return "All models scored equally";
+                } else if (scores[0].score === scores[1].score) {
+                  return `${scores[0].name} and ${scores[1].name} tied for highest score`;
+                } else {
+                  return `${scores[0].name} scored highest with ${scores[0].score} points`;
+                }
+              })()}
             </div>
           </div>
         </div>
