@@ -12,7 +12,12 @@ public class GeminiController {
     private GeminiService geminiService;
 
     @PostMapping("/generate")
-    public String generate(@RequestBody String prompt) {
+    public String generateCode(@RequestBody String prompt) {
         return geminiService.generateCode(prompt);
+    }
+
+    @PostMapping("/image")
+    public String generateImage(@RequestBody String prompt) {
+        return geminiService.generateImage(prompt);
     }
 }
