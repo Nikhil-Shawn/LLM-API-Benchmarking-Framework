@@ -1,0 +1,15 @@
+meta {
+  name: Post gemini image
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8081/api/gemini/generate
+  body: json
+  auth: none
+}
+
+body:json {
+  "Generate a Java function to reverse a string"
+}
