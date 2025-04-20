@@ -1,0 +1,15 @@
+meta {
+  name: Post api image scoring
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8081/api/gemini/image
+  body: json
+  auth: none
+}
+
+body:json {
+  "dog flying in a futuristic city"
+}
