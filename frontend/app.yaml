@@ -1,12 +1,13 @@
-- name: Set up Node
-  uses: actions/setup-node@v3
-  with:
-    node-version: 18
+runtime: nodejs18
+env: flex
+service: frontend
 
-- name: Install frontend dependencies
-  working-directory: frontend
-  run: npm install --legacy-peer-deps
+automatic_scaling:
+  target_cpu_utilization: 0.65
+  min_num_instances: 1
+  max_num_instances: 2
 
-- name: Build frontend
-  working-directory: frontend
-  run: npm run build
+entrypoint: npm start
+
+env_variables:
+  NODE_ENV: production

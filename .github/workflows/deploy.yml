@@ -17,19 +17,21 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: 18
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install --legacy-peer-deps
 
       - name: Build frontend
         working-directory: frontend
-        run: |
-          npm install
-          npm run build
+        run: npm run build
 
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: temurin
+          java-version: 17
 
       - name: Build backend
         working-directory: backend
@@ -45,8 +47,8 @@ jobs:
 
       - name: Deploy frontend to App Engine
         working-directory: frontend
-        run: gcloud app deploy --quiet
+        run: gcloud app deploy app.yaml --project="$PROJECT_ID" --quiet
 
       - name: Deploy backend to App Engine
         working-directory: backend
-        run: gcloud app deploy --quiet
+        run: gcloud app deploy app.yaml --project="$PROJECT_ID" --quiet
