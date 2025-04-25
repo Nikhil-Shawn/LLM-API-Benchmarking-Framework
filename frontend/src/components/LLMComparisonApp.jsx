@@ -10,7 +10,7 @@ const codeModels = [
 ];
 
 const imageModels = [
-  { id: "stablediffusion", name: "Stable Diffusion (Stability AI)" },
+  { id: "stableDiffusion", name: "Stable Diffusion XL Lightning (ByteDance)" },
   { id: "dalle", name: "DALL-E (OpenAI)" },
   { id: "gemini", name: "Gemini (Google)" } 
 ];
@@ -25,7 +25,7 @@ export default function LLMComparisonApp() {
 
   const [selectedModels, setSelectedModels] = useState({
     code: { modelA: "starcoder", modelB: "mistral", modelC: "gemini" },
-    image: { modelA: "stablediffusion", modelB: "dalle", modelC: "gemini" }
+    image: { modelA: "stableDiffusion", modelB: "dalle", modelC: "gemini" }
   });
 
   const currentModels = useCase === "code" ? codeModels : imageModels;
