@@ -46,6 +46,18 @@
             <artifactId>google-cloud-vertexai</artifactId>
         </dependency>
 
+         <!-- Reactor Netty / WebClient -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        
+        <!-- Jackson for JSON binding -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <dependency>
         <groupId>org.json</groupId>
         <artifactId>json</artifactId>

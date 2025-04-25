@@ -5,7 +5,7 @@ import ModelCard from "./ModelCard";
 
 const codeModels = [
   { id: "starcoder", name: "StarCoder (HuggingFace)" },
-  { id: "gpt35", name: "GPT-3.5 (OpenAI)" },
+  { id: "mistral", name: "Mistral AI" },
   { id: "gemini", name: "Gemini 1.5 Pro (Google)" }
 ];
 
@@ -24,7 +24,7 @@ export default function LLMComparisonApp() {
   const [showCriteria, setShowCriteria] = useState(false);
 
   const [selectedModels, setSelectedModels] = useState({
-    code: { modelA: "starcoder", modelB: "gpt35", modelC: "gemini" },
+    code: { modelA: "starcoder", modelB: "mistral", modelC: "gemini" },
     image: { modelA: "stablediffusion", modelB: "dalle", modelC: "gemini" }
   });
 
