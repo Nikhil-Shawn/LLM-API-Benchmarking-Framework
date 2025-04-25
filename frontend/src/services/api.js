@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://backend-dot-llm-comparison-app.uc.r.appspot.com";
+const API_BASE_URL = "http://localhost:8081";
 
 export async function generateOutputs(useCase, prompt, models) {
   if (useCase === "code") {
