@@ -1,5 +1,3 @@
-// File: src/utils/api.js
-
 const API_BASE_URL = "http://localhost:8081";
 
 export async function generateOutputs(useCase, prompt, models) {
@@ -18,6 +16,17 @@ export async function generateOutputs(useCase, prompt, models) {
         const output = await res.text();
 
         results.push({ model, output });
+      } else if (model === "mistral") { 
+        const res = await fetch(`${API_BASE_URL}/api/mistral/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(prompt)
+          });
+          
+          if (!res.ok) throw new Error("Failed to get MistralAI response");
+          const output = await res.text();
+          
+          results.push({ model, output });
       } else {
         results.push({
           model,
@@ -44,6 +53,19 @@ export async function generateOutputs(useCase, prompt, models) {
         const output = await res.text();
 
         results.push({ model, output });
+      } else if (model === "stableDiffusion") {
+        const res = await fetch(`${API_BASE_URL}/api/sdxl/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt})
+          }
+          );
+          if (!res.ok) throw new Error("Failed to get Stable Diffusion XL Lightning image");
+          const { results: sdxlResults } = await res.json();
+          sdxlResults.forEach(({ model: m, output }) =>
+          results.push({ model: m, output })
+          );
       } else {
         results.push({
           model,
