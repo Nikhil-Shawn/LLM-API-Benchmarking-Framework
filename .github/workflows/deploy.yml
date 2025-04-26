@@ -21,7 +21,9 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: frontend
-        run: npm install --legacy-peer-deps
+        run: |
+          npm ci --legacy-peer-deps
+          npm install react-scripts@5.0.1 --legacy-peer-deps
 
       - name: Build frontend
         working-directory: frontend
