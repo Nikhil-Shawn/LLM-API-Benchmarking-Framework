@@ -14,7 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Use Node 18 so the openssl-legacy-provider flag is permitted
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -46,6 +45,12 @@ jobs:
 
       - name: Set up gcloud CLI
         uses: google-github-actions/setup-gcloud@v1
+
+      - name: Ensure App Engine exists
+        run: |
+          if ! gcloud app describe --project="$PROJECT_ID" > /dev/null 2>&1; then
+            gcloud app create --project="$PROJECT_ID" --region="us-central"
+          fi
 
       - name: Deploy frontend to App Engine
         working-directory: frontend
