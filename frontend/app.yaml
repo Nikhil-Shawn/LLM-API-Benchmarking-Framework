@@ -1,6 +1,5 @@
 runtime: nodejs
 env: flex
-service: frontend
 
 runtime_config:
   operating_system: "ubuntu22"
@@ -16,5 +15,4 @@ resources:
   cpu: 4
   memory_gb: 4
 
-# entrypoint unchanged (yarn start:prod or npm run start)
 entrypoint: yarn start:prod
