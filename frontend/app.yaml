@@ -1,13 +1,27 @@
-runtime: nodejs22
+runtime: nodejs
 env: flex
-service: frontend
 
-automatic_scaling:
-  min_num_instances: 1
-  max_num_instances: 2
-  cool_down_period_sec: 180
+# Pin to Ubuntu 22 with Node.js 20
+runtime_config:
+  operating_system: "ubuntu22"
+  runtime_version: "20"
 
-entrypoint: npm start
+# You only need one instance for your React app
+manual_scaling:
+  instances: 1
 
-env_variables:
-  NODE_ENV: production
+# If you’re using WebSockets or any long-lived connections
+network:
+  session_affinity: true
+
+# Give it enough CPU / RAM so builds and runtime don’t time out
+resources:
+  cpu: 4
+  memory_gb: 4
+
+# If you need extra env vars, list them here
+includes:
+  - extra_env_vars.yaml
+
+# Launch your production build
+entrypoint: yarn start:prod
