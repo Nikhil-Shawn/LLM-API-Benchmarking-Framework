@@ -1,4 +1,4 @@
-runtime: nodejs22.15.01
+runtime: nodejs23
 env: flex
 service: frontend
 
