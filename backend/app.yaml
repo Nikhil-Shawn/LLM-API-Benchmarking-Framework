@@ -1,6 +1,10 @@
-runtime: java17
+runtime: java
 env: flex
 service: backend
+
+runtime_config:
+  operating_system: "ubuntu22"
+  runtime_version: "21"
 
 automatic_scaling:
   min_num_instances: 1
