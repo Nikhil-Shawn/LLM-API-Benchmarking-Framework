@@ -1,15 +1,17 @@
 runtime: java
 env: flex
-service: backend
 
 runtime_config:
   operating_system: "ubuntu22"
   runtime_version: "21"
 
 automatic_scaling:
-  min_num_instances: 1
-  max_num_instances: 2
-  cool_down_period_sec: 180
+  min_num_instances: 0  
+  max_num_instances: 2  
+
+resources:
+  cpu: 1         
+  memory_gb: 2   
 
 handlers:
   - url: /.*

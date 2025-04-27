@@ -12,7 +12,7 @@ network:
   session_affinity: true
 
 resources:
-  cpu: 4
-  memory_gb: 4
+  cpu: 1          
+  memory_gb: 1.5  
 
 entrypoint: yarn start:prod
