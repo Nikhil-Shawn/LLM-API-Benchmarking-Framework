@@ -1,12 +1,14 @@
-runtime: nodejs
+runtime: nodejs22
 env: standard
 instance_class: F1
 
 handlers:
+  # Serve built files at their matching paths
   - url: /(.*)
     static_files: build/\1
     upload: build/(.*)
 
+  # Fallback for client‐side routing
   - url: /.*
     static_files: build/index.html
     upload: build/index.html
