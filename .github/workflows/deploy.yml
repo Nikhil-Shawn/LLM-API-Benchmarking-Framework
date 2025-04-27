@@ -56,8 +56,16 @@ jobs:
 
       - name: Deploy frontend to App Engine
         working-directory: frontend
-        run: gcloud app deploy app.yaml --project="$PROJECT_ID" --quiet
+        run: |
+          gcloud app deploy app.yaml \
+            --project="$PROJECT_ID" \
+            --quiet \
+            --stop-previous-version
 
       - name: Deploy backend to App Engine
         working-directory: backend
-        run: gcloud app deploy app.yaml --project="$PROJECT_ID" --quiet
+        run: |
+          gcloud app deploy app.yaml \
+            --project="$PROJECT_ID" \
+            --quiet \
+            --stop-previous-version
