@@ -1,15 +1,11 @@
 runtime: nodejs22
-env: standard
-instance_class: F1
+env: flex
 
-handlers:
-  # Serve built files at their matching paths
-  - url: /(.*)
-    static_files: build/\1
-    upload: build/(.*)
+manual_scaling:
+  instances: 1
 
-  # Fallback for client‐side routing
-  - url: /.*
-    static_files: build/index.html
-    upload: build/index.html
-    secure: always
+resources:
+  cpu: 1
+  memory_gb: 1.5
+
+entrypoint: npm start
