@@ -14,7 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 1) Build Frontend
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -27,7 +26,6 @@ jobs:
           yarn install --ignore-engines
           yarn build
 
-      # 2) Authenticate & configure gcloud
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -44,7 +42,6 @@ jobs:
             gcloud app create --project="$PROJECT_ID" --region="us-central"
           fi
 
-      # 3) Deploy Frontend (static)
       - name: Deploy frontend to App Engine
         working-directory: frontend
         run: |
@@ -53,7 +50,6 @@ jobs:
             --quiet \
             --stop-previous-version
 
-      # 4) Build & deploy Backend
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
