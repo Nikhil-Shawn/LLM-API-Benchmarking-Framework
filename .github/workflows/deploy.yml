@@ -22,11 +22,15 @@ jobs:
       - name: Install Yarn
         run: npm install -g yarn
 
-      - name: Install & build frontend with Yarn
+      - name: Build & deploy frontend (static)
         working-directory: frontend
         run: |
           yarn install --ignore-engines
           yarn build
+          gcloud app deploy app.yaml \
+            --project="$PROJECT_ID" \
+            --quiet \
+            --stop-previous-version
 
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -54,15 +58,7 @@ jobs:
             gcloud app create --project="$PROJECT_ID" --region="us-central"
           fi
 
-      - name: Deploy frontend to App Engine
-        working-directory: frontend
-        run: |
-          gcloud app deploy app.yaml \
-            --project="$PROJECT_ID" \
-            --quiet \
-            --stop-previous-version
-
-      - name: Deploy backend to App Engine
+      - name: Deploy backend to App Engine (Flex)
         working-directory: backend
         run: |
           gcloud app deploy app.yaml \
