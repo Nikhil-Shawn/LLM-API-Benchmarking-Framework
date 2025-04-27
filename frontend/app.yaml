@@ -1,11 +1,18 @@
 runtime: nodejs
 env: flex
 
+runtime_config:
+  operating_system: "ubuntu22"
+  runtime_version: "20"
+
 manual_scaling:
   instances: 1
 
-resources:
-  cpu: 1
-  memory_gb: 1.5
+network:
+  session_affinity: true
 
-entrypoint: npm start
+resources:
+  cpu: 1          
+  memory_gb: 1.5  
+
+entrypoint: yarn start:prod
