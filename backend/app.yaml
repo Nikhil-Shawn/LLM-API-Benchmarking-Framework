@@ -1,3 +1,4 @@
+service: backend
 runtime: java
 env: flex
 
@@ -14,7 +15,10 @@ resources:
   memory_gb: 2
 
 env_variables:
-  GOOGLE_API_KEY: "AIzaSyBzogMhONMlInEHBLOQb33y7AY1gvEi_3Y"    
+  GOOGLE_API_KEY: "AIzaSyBzogMhONMlInEHBLOQb33y7AY1gvEi_3Y"
+
+# Force Spring to listen on the container port
+entrypoint: java -Dserver.port=$PORT -jar target/llm-comparison-backend-1.0.0.jar
 
 handlers:
   - url: /.*
