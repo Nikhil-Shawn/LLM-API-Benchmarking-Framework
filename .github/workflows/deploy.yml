@@ -14,34 +14,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 1) Build Frontend
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Install Yarn
-        run: npm install -g yarn
-
-      - name: Build & deploy frontend (static)
+      - name: Install Yarn & build frontend
         working-directory: frontend
         run: |
+          npm install -g yarn
           yarn install --ignore-engines
           yarn build
-          gcloud app deploy app.yaml \
-            --project="$PROJECT_ID" \
-            --quiet \
-            --stop-previous-version
 
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: temurin
-          java-version: 17
-
-      - name: Build backend
-        working-directory: backend
-        run: mvn clean package -DskipTests
-
+      # 2) Authenticate & configure gcloud
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -58,7 +44,27 @@ jobs:
             gcloud app create --project="$PROJECT_ID" --region="us-central"
           fi
 
-      - name: Deploy backend to App Engine (Flex)
+      # 3) Deploy Frontend (static)
+      - name: Deploy frontend to App Engine
+        working-directory: frontend
+        run: |
+          gcloud app deploy app.yaml \
+            --project="$PROJECT_ID" \
+            --quiet \
+            --stop-previous-version
+
+      # 4) Build & deploy Backend
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build backend
+        working-directory: backend
+        run: mvn clean package -DskipTests
+
+      - name: Deploy backend to App Engine
         working-directory: backend
         run: |
           gcloud app deploy app.yaml \
