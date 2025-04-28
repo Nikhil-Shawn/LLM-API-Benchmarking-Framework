@@ -10,7 +10,7 @@ const codeModels = [
 ];
 
 const imageModels = [
-  { id: "stableDiffusion", name: "Stable Diffusion XL Lightning (ByteDance)" },
+  { id: "AIHorde", name: "AIHorde" },
   { id: "dalle", name: "DALL-E (OpenAI)" },
   { id: "gemini", name: "Gemini (Google)" } 
 ];
