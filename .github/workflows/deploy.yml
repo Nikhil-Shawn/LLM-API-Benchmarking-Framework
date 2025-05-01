@@ -19,13 +19,36 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install frontend dependencies
+      - name: Install Yarn & build frontend
         working-directory: frontend
-        run: npm install --legacy-peer-deps
+        run: |
+          npm install -g yarn
+          yarn install --ignore-engines
+          yarn build
 
-      - name: Build frontend
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: '>=420.0.0'
+
+      - name: Ensure App Engine exists
+        run: |
+          if ! gcloud app describe --project="$PROJECT_ID" > /dev/null 2>&1; then
+            gcloud app create --project="$PROJECT_ID" --region="us-central"
+          fi
+
+      - name: Deploy frontend to App Engine
         working-directory: frontend
-        run: npm run build
+        run: |
+          gcloud app deploy app.yaml \
+            --project="$PROJECT_ID" \
+            --quiet \
+            --stop-previous-version
 
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -37,18 +60,10 @@ jobs:
         working-directory: backend
         run: mvn clean package -DskipTests
 
-      - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
-
-      - name: Set up gcloud CLI
-        uses: google-github-actions/setup-gcloud@v1
-
-      - name: Deploy frontend to App Engine
-        working-directory: frontend
-        run: gcloud app deploy app.yaml --project="$PROJECT_ID" --quiet
-
       - name: Deploy backend to App Engine
         working-directory: backend
-        run: gcloud app deploy app.yaml --project="$PROJECT_ID" --quiet
+        run: |
+          gcloud app deploy app.yaml \
+            --project="$PROJECT_ID" \
+            --quiet \
+            --stop-previous-version

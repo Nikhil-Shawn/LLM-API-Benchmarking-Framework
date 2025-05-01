@@ -4,15 +4,15 @@
   "private": true,
   "dependencies": {
     "@jridgewell/gen-mapping": "^0.1.1",
-    "@react-router/dev": "^7.5.0",
+    "express": "^4.18.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-scripts": "4.0.3",
+    "react-router-dom": "^6.14.1",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "scripts": {
-    "start": "NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
-    "build": "NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
+    "start": "set \"NODE_OPTIONS=--openssl-legacy-provider\" && react-scripts start",
+    "build": "set \"NODE_OPTIONS=--openssl-legacy-provider\" && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -30,7 +30,10 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",
+    "ajv": "^8.12.0",
+    "ajv-keywords": "^5.1.0",
     "postcss": "^8.5.3",
+    "react-scripts": "^5.0.1",
     "tailwindcss": "^3.4.17"
   }
 }

@@ -1,3 +1,5 @@
+// services/api.js
+
 const API_BASE_URL = "http://localhost:8081";
 
 export async function generateOutputs(useCase, prompt, models) {
@@ -5,33 +7,42 @@ export async function generateOutputs(useCase, prompt, models) {
     const results = [];
 
     for (const model of models) {
-      if (model === "gemini") {
-        const res = await fetch(`${API_BASE_URL}/api/gemini/generate`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(prompt)
-        });
-
-        if (!res.ok) throw new Error("Failed to get Gemini response");
-        const output = await res.text();
-
-        results.push({ model, output });
-      } else if (model === "mistral") { 
-        const res = await fetch(`${API_BASE_URL}/api/mistral/generate`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(prompt)
+      switch (model) {
+        case "gemini": {
+          const res = await fetch(`${API_BASE_URL}/api/gemini/generate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt }),      // wrapped in { prompt }
           });
-          
+          if (!res.ok) throw new Error("Failed to get Gemini response");
+          results.push({ model, output: await res.text() });
+          break;
+        }
+        case "starcoder": {
+          const res = await fetch(`${API_BASE_URL}/api/starcoder/generate`, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: prompt,
+          });
+          if (!res.ok) throw new Error("Failed to get StarCoder response");
+          results.push({ model, output: await res.text() });
+          break;
+        }
+        case "mistral": {
+          const res = await fetch(`${API_BASE_URL}/api/mistral/generate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt }),      // wrapped in { prompt }
+          });
           if (!res.ok) throw new Error("Failed to get MistralAI response");
-          const output = await res.text();
-          
-          results.push({ model, output });
-      } else {
-        results.push({
-          model,
-          output: `Mocked output from ${model} for prompt: ${prompt}`
-        });
+          results.push({ model, output: await res.text() });
+          break;
+        }
+        default:
+          results.push({
+            model,
+            output: `Mocked output from ${model} for prompt: ${prompt}`,
+          });
       }
     }
 
@@ -42,49 +53,48 @@ export async function generateOutputs(useCase, prompt, models) {
     const results = [];
 
     for (const model of models) {
-      if (model === "gemini") {
-        const res = await fetch(`${API_BASE_URL}/api/gemini/image`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(prompt)
-        });
-
-        if (!res.ok) throw new Error("Failed to get Gemini image");
-        const output = await res.text();
-
-        results.push({ model, output });
-      } else if (model === "stableDiffusion") {
-        const res = await fetch(`${API_BASE_URL}/api/sdxl/generate`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            prompt})
-          }
-          );
+      switch (model) {
+        case "gemini": {
+          const res = await fetch(`${API_BASE_URL}/api/gemini/image`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt }),      // wrapped in { prompt }
+          });
+          if (!res.ok) throw new Error("Failed to get Gemini image");
+          results.push({ model, output: await res.text() });
+          break;
+        }
+        case "stableDiffusion": {
+          const res = await fetch(`${API_BASE_URL}/api/sdxl/generate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt }),
+          });
           if (!res.ok) throw new Error("Failed to get Stable Diffusion XL Lightning image");
           const { results: sdxlResults } = await res.json();
           sdxlResults.forEach(({ model: m, output }) =>
-          results.push({ model: m, output })
+            results.push({ model: m, output })
           );
-      } else {
-        results.push({
-          model,
-          output: `Mocked image response from ${model} for prompt: ${prompt}`
-        });
+          break;
+        }
+        case "aihorde": {
+          const res = await fetch(`${API_BASE_URL}/api/aihorde/image`, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: prompt,
+          });
+          if (!res.ok) throw new Error("Failed to get AI Horde image");
+          results.push({ model, output: await res.text() });
+          break;
+        }
+        default:
+          results.push({
+            model,
+            output: `Mocked image response from ${model} for prompt: ${prompt}`,
+          });
       }
     }
 
     return { results };
   }
-}
-
-export async function submitEvaluation(data) {
-  const response = await fetch(`${API_BASE_URL}/api/submit-evaluation`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
-
-  if (!response.ok) throw new Error("Failed to submit evaluation");
-  return response.json();
 }

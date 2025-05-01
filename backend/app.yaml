@@ -1,10 +1,24 @@
-runtime: java17
-env: flex
 service: backend
+runtime: java
+env: flex
+
+runtime_config:
+  operating_system: "ubuntu22"
+  runtime_version: "21"
 
 automatic_scaling:
-  min_num_instances: 1
-  max_num_instances: 2
+  max_num_instances: 1
+  cool_down_period_sec: 180
+
+resources:
+  cpu: 1
+  memory_gb: 2
+
+env_variables:
+  GOOGLE_API_KEY: "AIzaSyBzogMhONMlInEHBLOQb33y7AY1gvEi_3Y"
+
+# Force Spring to listen on the container port
+entrypoint: java -Dserver.port=$PORT -jar target/llm-comparison-backend-1.0.0.jar
 
 handlers:
   - url: /.*
