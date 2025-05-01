@@ -1,5 +1,3 @@
-// services/api.js
-
 const API_BASE_URL = "http://localhost:8081";
 
 export async function generateOutputs(useCase, prompt, models) {
@@ -12,7 +10,7 @@ export async function generateOutputs(useCase, prompt, models) {
           const res = await fetch(`${API_BASE_URL}/api/gemini/generate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt }),      // wrapped in { prompt }
+            body: JSON.stringify(prompt),
           });
           if (!res.ok) throw new Error("Failed to get Gemini response");
           results.push({ model, output: await res.text() });
@@ -32,7 +30,7 @@ export async function generateOutputs(useCase, prompt, models) {
           const res = await fetch(`${API_BASE_URL}/api/mistral/generate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt }),      // wrapped in { prompt }
+            body: JSON.stringify(prompt),
           });
           if (!res.ok) throw new Error("Failed to get MistralAI response");
           results.push({ model, output: await res.text() });
@@ -58,7 +56,7 @@ export async function generateOutputs(useCase, prompt, models) {
           const res = await fetch(`${API_BASE_URL}/api/gemini/image`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt }),      // wrapped in { prompt }
+            body: JSON.stringify(prompt),
           });
           if (!res.ok) throw new Error("Failed to get Gemini image");
           results.push({ model, output: await res.text() });
