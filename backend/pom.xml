@@ -25,10 +25,11 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- Use the GCP Java Libraries BOM to lock in compatible versions -->
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>libraries-bom</artifactId>
-        <version>26.29.0</version>
+        <version>26.43.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -36,10 +37,10 @@
   </dependencyManagement>
 
   <dependencies>
-    <!-- Vertex AI client (Gemini) -->
+    <!-- Vertex AI client (includes com.google.cloud.vertexai.generation) -->
     <dependency>
       <groupId>com.google.cloud</groupId>
-      <artifactId>google-cloud-aiplatform</artifactId>
+      <artifactId>google-cloud-vertexai</artifactId>
     </dependency>
 
     <!-- BigQuery client -->
@@ -60,7 +61,7 @@
       <artifactId>google-cloud-logging-logback</artifactId>
     </dependency>
 
-    <!-- Spring Boot Web and WebFlux -->
+    <!-- Spring Boot Web & WebFlux -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -75,15 +76,13 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
-
-    <!-- Optional: plain org.json -->
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>20230227</version>
     </dependency>
 
-    <!-- GCP Auth Library -->
+    <!-- GCP Auth library -->
     <dependency>
       <groupId>com.google.auth</groupId>
       <artifactId>google-auth-library-oauth2-http</artifactId>
@@ -92,6 +91,7 @@
 
   <build>
     <plugins>
+      <!-- Spring Boot "fat jar" plugin -->
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
