@@ -1,3 +1,7 @@
+// src/services/api.js
+
+import { getCriteria } from "../utils/evaluation";
+
 const API_BASE_URL = "http://localhost:8081";
 
 export async function generateOutputs(useCase, prompt, models) {
@@ -10,7 +14,7 @@ export async function generateOutputs(useCase, prompt, models) {
           const res = await fetch(`${API_BASE_URL}/api/gemini/generate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(prompt),
+            body: JSON.stringify({ prompt }),
           });
           if (!res.ok) throw new Error("Failed to get Gemini response");
           results.push({ model, output: await res.text() });
@@ -30,7 +34,7 @@ export async function generateOutputs(useCase, prompt, models) {
           const res = await fetch(`${API_BASE_URL}/api/mistral/generate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(prompt),
+            body: JSON.stringify({ prompt }),
           });
           if (!res.ok) throw new Error("Failed to get MistralAI response");
           results.push({ model, output: await res.text() });
@@ -56,7 +60,7 @@ export async function generateOutputs(useCase, prompt, models) {
           const res = await fetch(`${API_BASE_URL}/api/gemini/image`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(prompt),
+            body: JSON.stringify({ prompt }),
           });
           if (!res.ok) throw new Error("Failed to get Gemini image");
           results.push({ model, output: await res.text() });
@@ -88,11 +92,34 @@ export async function generateOutputs(useCase, prompt, models) {
         default:
           results.push({
             model,
-            output: `Mocked image response from ${model} for prompt: ${prompt}`,
+            output: `Mocked image response from ${model}`,
           });
       }
     }
 
+    // ----- TEMPORARY: return the raw image results for testing -----
     return { results };
+
+    // Later, once your scoring API is ready, you can re-enable the evaluation:
+    //
+    // // strip any data:image prefix
+    // const imageUrls = results.map(r =>
+    //   r.output.startsWith("data:image")
+    //     ? r.output.replace(/^data:image\/[^;]+;base64,/, "")
+    //     : r.output
+    // );
+    //
+    // const evalPrompt = buildEvalPrompt(prompt, imageUrls, getCriteria("image"));
+    // const evalRes = await fetch(`${API_BASE_URL}/api/gemini/generate`, {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ prompt: evalPrompt }),
+    // });
+    // if (!evalRes.ok) throw new Error("Failed to score images via Gemini");
+    // const { scores, winner } = JSON.parse(await evalRes.text());
+    //
+    // return { results, scores, winner };
   }
+
+  throw new Error(`Unknown useCase: ${useCase}`);
 }
