@@ -42,7 +42,6 @@ const isLooselyMatching = (output, refVariants) => {
   const normalizedOutput = normalize(output);
   return refVariants.some((ref) => {
     const normalizedRef = normalize(ref);
-    // Check if at least 50% of the reference tokens appear in output
     const refTokens = new Set(normalizedRef.split(" "));
     const outputTokens = new Set(normalizedOutput.split(" "));
     const common = [...refTokens].filter((token) => outputTokens.has(token));
@@ -78,5 +77,6 @@ export const autoEvaluateOutput = (output, useCase, prompt = "") => {
 
 export const getTotalScore = (scores) => {
   if (!scores) return 0;
+  if (typeof scores === "number") return scores; 
   return Object.values(scores).reduce((a, b) => a + b, 0);
 };
