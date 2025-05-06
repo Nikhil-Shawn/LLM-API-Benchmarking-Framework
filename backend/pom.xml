@@ -37,6 +37,7 @@
   </dependencyManagement>
 
   <dependencies>
+  
     <!-- Vertex AI client (includes com.google.cloud.vertexai.generation) -->
     <dependency>
       <groupId>com.google.cloud</groupId>
