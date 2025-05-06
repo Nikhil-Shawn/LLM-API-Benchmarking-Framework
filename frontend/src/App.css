@@ -479,3 +479,26 @@ code {
   margin: 0 auto;
   padding: 0 1rem;
 }
+
+.model-card .model-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.model-title {
+  max-width: 130px; /* Keep names like "stable-diffusion-xl-lightning" short */
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.model-score {
+  background-color: #e0ecff;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}

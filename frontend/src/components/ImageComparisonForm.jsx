@@ -21,17 +21,17 @@ export default function ImageComparisonForm() {
     setLoading(true);
     try {
       const ids = ["modelA", "modelB", "modelC"].map(s => sel[s]);
-      // only test image generation results for now
-      const { results: raw } = await generateOutputs(useCase, prompt, ids);
-
+  
+      const { results: raw, scores, winner } = await generateOutputs(useCase, prompt, ids);
+  
       const formatted = {
         modelA: { name: raw[0].model, output: raw[0].output },
         modelB: { name: raw[1].model, output: raw[1].output },
         modelC: { name: raw[2].model, output: raw[2].output }
       };
+  
       setResults(formatted);
-      // placeholder: reset scores until scoring is implemented
-      setScores({ A: 0, B: 0, C: 0 });
+      setScores(scores);  // ✅ actual scores now shown in UI
     } catch (err) {
       console.error("Error generating images:", err);
       alert("Failed to generate images. See console for details.");
