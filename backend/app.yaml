@@ -16,8 +16,12 @@ resources:
 
 env_variables:
   GOOGLE_API_KEY: "AIzaSyBzogMhONMlInEHBLOQb33y7AY1gvEi_3Y"
+  MISTRAL_API_KEY: "IK1Mulp1ebx52dtXOpcFrxZjwtEIpNJN"
+  CLOUDFLARE_API_TOKEN: "JCYaQZwuhPpLy3sXxi8qOYtRS6JCXzbR1GMo33Ni"
+  CLOUDFLARE_ACCOUNT_ID: "85da2e9c112a69206d0930ac6aeeeaef"
+  STABLE_HORDE_KEY: "_TSt6gmY0Q0VmhkJG8UNhA"
+  HUGGINGFACE_API_KEY: "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"
 
-# Force Spring to listen on the container port
 entrypoint: java -Dserver.port=$PORT -jar target/llm-comparison-backend-1.0.0.jar
 
 handlers:
