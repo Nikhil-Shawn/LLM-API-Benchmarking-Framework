@@ -2,7 +2,7 @@
 
 import { getCriteria } from "../utils/evaluation";
 
-const API_BASE_URL = "http://localhost:8081";
+const API_BASE_URL = "https://backend-dot-llm-comparison-app.uc.r.appspot.com";
 
 function buildEvalPrompt(userPrompt, images, criteria) {
   const critList = criteria.map(c => `- ${c.label}`).join("\n");
