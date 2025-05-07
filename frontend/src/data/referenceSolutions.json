@@ -1,30 +1,45 @@
 {
-  "fizzbuzz": [
-    "public static void fizzbuzz(int n) {\n    for (int i = 1; i <= n; i++) {\n        if (i % 15 == 0) System.out.println(\"FizzBuzz\");\n        else if (i % 3 == 0) System.out.println(\"Fizz\");\n        else if (i % 5 == 0) System.out.println(\"Buzz\");\n        else System.out.println(i);\n    }\n}",
-    "for (int i = 1; i <= 100; i++) {\n    if (i % 3 == 0 && i % 5 == 0) {\n        System.out.println(\"FizzBuzz\");\n    } else if (i % 3 == 0) {\n        System.out.println(\"Fizz\");\n    } else if (i % 5 == 0) {\n        System.out.println(\"Buzz\");\n    } else {\n        System.out.println(i);\n    }\n}"
+  "fizzbuzz": {
+    "variants": [
+      "def fizzbuzz(n):\n    for i in range(1, n + 1):\n        if i % 15 == 0:\n            print('FizzBuzz')\n        elif i % 3 == 0:\n            print('Fizz')\n        elif i % 5 == 0:\n            print('Buzz')\n        else:\n            print(i)"
+    ],
+    "testCases": "from io import StringIO\nimport sys\n\ndef capture_output(n):\n    old_stdout = sys.stdout\n    sys.stdout = mystdout = StringIO()\n    fizzbuzz(n)\n    sys.stdout = old_stdout\n    return mystdout.getvalue().strip().split('\\n')\n\nassert capture_output(5) == ['1', '2', 'Fizz', '4', 'Buzz']\nassert capture_output(15)[-1] == 'FizzBuzz'\nassert capture_output(10)[2] == 'Fizz'\nassert 'Buzz' in capture_output(10)\nassert capture_output(3)[-1] == 'Fizz'\nassert capture_output(9)[-1] == 'Fizz'\nassert capture_output(10)[4] == 'Buzz'\nassert capture_output(30).count('FizzBuzz') == 2\nassert capture_output(1)[0] == '1'\nassert capture_output(6)[2] == 'Fizz'"
+  },
+
+  "is_palindrome_permutation": {
+    "variants": [
+      "def is_palindrome_permutation(s):\n    from collections import Counter\n    s = s.replace(\" \", \"\").lower()\n    counts = Counter(s)\n    odd_counts = sum(1 for count in counts.values() if count % 2 != 0)\n    return odd_counts <= 1"
+    ],
+    "testCases": "assert is_palindrome_permutation('Tact Coa') == True\nassert is_palindrome_permutation('aabb') == True\nassert is_palindrome_permutation('aabc') == False\nassert is_palindrome_permutation('carerac') == True\nassert is_palindrome_permutation('abcba') == True\nassert is_palindrome_permutation('abcd') == False\nassert is_palindrome_permutation('Aa') == True\nassert is_palindrome_permutation('aA ') == True\nassert is_palindrome_permutation('xyzxyzx') == True\nassert is_palindrome_permutation('xyzxyzxyz') == False"
+  },
+  "majority element": {
+  "variants": [
+    "def majority_element(nums):\n    count = 0\n    candidate = None\n    for num in nums:\n        if count == 0:\n            candidate = num\n        count += (1 if num == candidate else -1)\n    return candidate"
   ],
-  "reverse a string": [
-    "public String reverseString(String str) {\n    if (str == null) return \"\";\n    return new StringBuilder(str).reverse().toString();\n}",
-    "public String reverse(String s) {\n    char[] chars = s.toCharArray();\n    int left = 0, right = chars.length - 1;\n    while (left < right) {\n        char temp = chars[left];\n        chars[left] = chars[right];\n        chars[right] = temp;\n        left++;\n        right--;\n    }\n    return new String(chars);\n}"
+  "testCases": "assert majority_element([3,3,4]) == 3\nassert majority_element([2,2,1,1,1,2,2]) == 2\nassert majority_element([1]) == 1\nassert majority_element([1,1,2]) == 1\nassert majority_element([5,5,5,5,5,6,7]) == 5\nassert majority_element([6,6,6,7,7]) == 6\nassert majority_element([2,2,2,3,3]) == 2\nassert majority_element([1,2,3,2,2]) == 2\nassert majority_element([8,8,9,8,9,8,8]) == 8\nassert majority_element([10,10,10,20,30,10,10]) == 10"
+},
+"has unique characters": {
+  "variants": [
+    "def has_unique_chars(s):\n    s = s.replace(\" \", \"\").lower()\n    return len(set(s)) == len(s)"
   ],
-  "palindrome check": [
-    "public boolean isPalindrome(String s) {\n    int left = 0, right = s.length() - 1;\n    while (left < right) {\n        if (s.charAt(left) != s.charAt(right)) return false;\n        left++;\n        right--;\n    }\n    return true;\n}"
+  "testCases": "assert has_unique_chars(\"abcdefg\") is True\nassert has_unique_chars(\"a b c d e f g\") is True\nassert has_unique_chars(\"aA\") is False\nassert has_unique_chars(\"abc def ghi\") is True\nassert has_unique_chars(\"abc def ghi jkl mno pqr stu vwx yza\") is False\nassert has_unique_chars(\"1234567890\") is True\nassert has_unique_chars(\"11234567890\") is False\nassert has_unique_chars(\"\") is True\nassert has_unique_chars(\" \") is True\nassert has_unique_chars(\"!@# $%^&*()\") is True"
+},
+"has unique alphanum": {
+  "variants": [
+    "def has_unique_chars(s):\n    s = ''.join(c.lower() for c in s if c.isalnum())\n    return len(set(s)) == len(s)"
   ],
-  "two sum": [
-    "public int[] twoSum(int[] nums, int target) {\n    Map<Integer, Integer> map = new HashMap<>();\n    for (int i = 0; i < nums.length; i++) {\n        int complement = target - nums[i];\n        if (map.containsKey(complement)) {\n            return new int[] { map.get(complement), i };\n        }\n        map.put(nums[i], i);\n    }\n    return new int[0];\n}"
+  "testCases": "assert has_unique_chars('abc def!') is True\nassert has_unique_chars('aA1') is False\nassert has_unique_chars('abc def ghi') is True\nassert has_unique_chars('abc1231') is False\nassert has_unique_chars('1234567890') is True\nassert has_unique_chars('!@# $%^') is True\nassert has_unique_chars('AaBbCc') is False\nassert has_unique_chars('A B C ! 1 2 3') is True\nassert has_unique_chars('abc def ghi jkl mno pqr stu vwx yza') is False\nassert has_unique_chars('') is True"
+},"has unique chars strict": {
+  "variants": [
+    "def has_unique_chars(s):\n    s = ''.join(c.lower() for c in s if c.isalnum())\n    return len(set(s)) == len(s)"
   ],
-  "factorial": [
-    "public int factorial(int n) {\n    if (n <= 1) return 1;\n    return n * factorial(n - 1);\n}",
-    "public int factIterative(int n) {\n    int result = 1;\n    for (int i = 2; i <= n; i++) {\n        result *= i;\n    }\n    return result;\n}"
+  "testCases": "assert has_unique_chars('abc def!') is True\nassert has_unique_chars('aA1') is False\nassert has_unique_chars('abc123') is True\nassert has_unique_chars('abc1233') is False\nassert has_unique_chars('!@# $%^') is True\nassert has_unique_chars('AaBbCcDd') is False\nassert has_unique_chars('A B C D E F') is True\nassert has_unique_chars('abcdefghi1234567890') is True\nassert has_unique_chars('abc def ghi jkl mno pqr stu vwx yza') is False\nassert has_unique_chars('a b c d e f g h i j k l m n o p q r s t u v w x y z') is True\nassert has_unique_chars('aA') is False\nassert has_unique_chars('1 2 3 4 5 6 7 8 9 0') is True\nassert has_unique_chars('1 2 3 4 5 6 7 8 9 0 1') is False\nassert has_unique_chars('') is True\nassert has_unique_chars('   ') is True\nassert has_unique_chars('@@##!!') is True\nassert has_unique_chars('abc def ghi jkl mno pqr stu vwx yz') is True\nassert has_unique_chars('abc def ghi jkl mno pqr stu vwx yza') is False\nassert has_unique_chars('abcABC') is False\nassert has_unique_chars('𝔘𝔫𝔦𝔮𝔲𝔢') is True"
+},
+"is palindrome permutation strict": {
+  "variants": [
+    "def is_palindrome_permutation(s):\n    from collections import Counter\n    s = ''.join(c.lower() for c in s if c.isalnum())\n    counts = Counter(s)\n    odd_count = sum(1 for c in counts.values() if c % 2 != 0)\n    return odd_count <= 1"
   ],
-  "fibonacci": [
-    "public int fibonacci(int n) {\n    if (n <= 1) return n;\n    return fibonacci(n - 1) + fibonacci(n - 2);\n}",
-    "public int fibonacciIterative(int n) {\n    if (n <= 1) return n;\n    int a = 0, b = 1;\n    for (int i = 2; i <= n; i++) {\n        int temp = a + b;\n        a = b;\n        b = temp;\n    }\n    return b;\n}"
-  ],
-  "binary search": [
-    "public int binarySearch(int[] arr, int target) {\n    int left = 0, right = arr.length - 1;\n    while (left <= right) {\n        int mid = left + (right - left) / 2;\n        if (arr[mid] == target) return mid;\n        if (arr[mid] < target) left = mid + 1;\n        else right = mid - 1;\n    }\n    return -1;\n}"
-  ],
-  "merge two sorted arrays": [
-    "public int[] mergeSortedArrays(int[] nums1, int[] nums2) {\n    int[] merged = new int[nums1.length + nums2.length];\n    int i = 0, j = 0, k = 0;\n    while (i < nums1.length && j < nums2.length) {\n        if (nums1[i] < nums2[j]) merged[k++] = nums1[i++];\n        else merged[k++] = nums2[j++];\n    }\n    while (i < nums1.length) merged[k++] = nums1[i++];\n    while (j < nums2.length) merged[k++] = nums2[j++];\n    return merged;\n}"
-  ]
+  "testCases": "assert is_palindrome_permutation('Tact Coa') is True  # 'taco cat'\nassert is_palindrome_permutation('racecar') is True\nassert is_palindrome_permutation('aabbccddeeffg') is True\nassert is_palindrome_permutation('aabbccddeeffgg') is False\nassert is_palindrome_permutation('') is True\nassert is_palindrome_permutation('!@#$') is True\nassert is_palindrome_permutation('A man, a plan, a canal, Panama') is True\nassert is_palindrome_permutation('Was it a car or a cat I saw') is True\nassert is_palindrome_permutation('No lemon, no melon') is True\nassert is_palindrome_permutation('abcdefg') is False\nassert is_palindrome_permutation('aa bb cc dd e') is True\nassert is_palindrome_permutation('aa bb cc dd ee') is True\nassert is_palindrome_permutation('abcba') is True\nassert is_palindrome_permutation('abccba') is True\nassert is_palindrome_permutation('abc') is False\nassert is_palindrome_permutation('AaBbCcDd') is True\nassert is_palindrome_permutation('abcdabcd') is True\nassert is_palindrome_permutation('abcdabcde') is False\nassert is_palindrome_permutation('x') is True\nassert is_palindrome_permutation('xyzzyx') is True"
+}
+
 }

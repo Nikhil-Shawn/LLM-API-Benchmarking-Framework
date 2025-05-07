@@ -437,3 +437,68 @@ code {
 .code-output::-webkit-scrollbar-track {
   background-color: #374151;
 }
+
+.app-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0 1rem;
+}
+
+.nav-btn {
+  padding: 0.6rem 1.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: #374151;       /* gray-700 */
+  background: #f3f4f6;  /* gray-100 */
+  border-radius: 0.375rem;
+  border: 1px solid transparent;
+  transition: 
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+.nav-btn:hover {
+  background: #e5e7eb;  /* gray-200 */
+}
+
+.nav-btn--active {
+  background: #2563eb;  /* blue-600 */
+  color: #ffffff;
+  border-color: #1d4ed8; /* blue-700 */
+}
+
+.nav-btn--active:hover {
+  background: #1d4ed8;   /* blue-700 */
+}
+
+/* Optional: wrap the form/results in a card-like container */
+.app-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.model-card .model-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.model-title {
+  max-width: 130px; /* Keep names like "stable-diffusion-xl-lightning" short */
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.model-score {
+  background-color: #e0ecff;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
