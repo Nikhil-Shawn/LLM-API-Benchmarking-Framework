@@ -7,6 +7,8 @@ import com.google.cloud.vertexai.generativeai.ResponseHandler;              // h
 import com.google.cloud.vertexai.api.GenerateContentResponse;               // the SDK’s response type
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ import java.util.*;
 
 @Service
 public class GeminiService {
+  private static final Logger logger = LoggerFactory.getLogger(GeminiService.class);
+
   private final GenerativeModel textModel;
   private final HttpClient httpClient = HttpClient.newHttpClient();
   private final String imageEndpoint;
@@ -39,13 +43,9 @@ public class GeminiService {
       @Value("${vertex.textModel}") String textModelId,
       @Value("${google.api.key}") String apiKey) {
 
-    // 1) Initialize VertexAI
     VertexAI vertexAi = new VertexAI(project, location);
-
-    // 2) Construct the GenerativeModel
     this.textModel = new GenerativeModel(textModelId, vertexAi);
 
-    // 3) Prepare the REST endpoints
     this.apiKey = apiKey;
     this.imageEndpoint =
         "https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=" + apiKey;
@@ -54,11 +54,15 @@ public class GeminiService {
   }
 
   public String generateText(String prompt) throws IOException {
+    logger.info("🔤 [Gemini] Generating text for prompt: {}", prompt);
     GenerateContentResponse resp = textModel.generateContent(ContentMaker.fromString(prompt));
-    return ResponseHandler.getText(resp);
+    String result = ResponseHandler.getText(resp);
+    logger.debug("📄 [Gemini] Response text: {}", result);
+    return result;
   }
 
   public String generateImage(String prompt) throws IOException, InterruptedException {
+    logger.info("🖼️ [Gemini] Generating image for prompt: {}", prompt);
     String bodyJson = String.format(
       "{ \"instances\": [ { \"prompt\": \"%s\" } ] }",
       prompt.replace("\"", "\\\"")
@@ -70,6 +74,10 @@ public class GeminiService {
         .build();
 
     HttpResponse<String> r = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+    if (r.statusCode() != 200) {
+      logger.error("❌ [Gemini] Image generation failed: {}", r.body());
+      throw new IOException("Image generation failed.");
+    }
     JSONObject json = new JSONObject(r.body());
     String b64 = json
       .getJSONArray("predictions")
@@ -81,6 +89,8 @@ public class GeminiService {
 
   public String analyzeImage(String base64Data, String instruction)
       throws IOException, InterruptedException {
+
+    logger.info("🔍 [Gemini] Analyzing image with instruction: {}", instruction);
 
     String url = String.format(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=%s",
@@ -115,7 +125,9 @@ public class GeminiService {
         .build();
 
     HttpResponse<String> res = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+    logger.debug("📦 [Gemini] analyzeImage response: {}", res.body());
     if (res.statusCode() != 200) {
+      logger.error("❌ [Gemini] analyzeImage failed: {}", res.body());
       throw new IOException("Gemini analyzeImage failed: " + res.body());
     }
 
@@ -125,6 +137,7 @@ public class GeminiService {
   }
 
   public String scoreImage(String imageRef) throws Exception {
+    logger.info("🏁 [Gemini] Scoring image...");
     byte[] bytes;
     if (imageRef.startsWith("data:")) {
       String b64 = imageRef.substring(imageRef.indexOf(',') + 1);
@@ -141,6 +154,8 @@ public class GeminiService {
         "data", Base64.getEncoder().encodeToString(bytes)
       )
     );
+    logger.debug("🧪 [Gemini] InlineData Payload: {}", inlineData);
+
     Map<String,Object> textPart = Map.of(
       "text", "Rate this image 0–10 (just give me the number)."
     );
@@ -157,16 +172,19 @@ public class GeminiService {
     JsonNode bodyNode = resp.getBody();
 
     if (bodyNode == null || !bodyNode.has("candidates")) {
+      logger.error("❌ [Gemini] No candidates returned: {}", bodyNode);
       throw new IOException("Gemini returned no candidates for image scoring.");
     }
 
     JsonNode candidates = bodyNode.get("candidates");
     if (candidates == null || !candidates.isArray() || candidates.isEmpty()) {
+      logger.error("❌ [Gemini] Empty candidates in scoreImage: {}", bodyNode);
       throw new IOException("No candidates returned for image scoring: " + bodyNode.toPrettyString());
     }
 
     JsonNode parts = candidates.get(0).path("content").path("parts");
     if (parts == null || !parts.isArray() || parts.isEmpty()) {
+      logger.error("❌ [Gemini] No parts in response: {}", bodyNode);
       throw new IOException("No parts in response: " + bodyNode.toPrettyString());
     }
 
